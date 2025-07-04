@@ -4,7 +4,7 @@ from dash import dcc, html
 import plotly.express as px
 
 # Load data
-df = pd.read_csv('/content/drive/MyDrive/bdg2_energy_project/data/predictions.csv', parse_dates=['timestamp'])
+df = pd.read_csv('/content/drive/MyDrive/bdg2_energy_project/energy_dashboard/data/predictions.csv', parse_dates=['timestamp'])
 
 # Initialize Dash
 app = dash.Dash(__name__)
@@ -62,5 +62,5 @@ def update_graph(selected_building, overlays):
 
 # Run
 if __name__ == '__main__':
-    app.run_server(host="0.0.0.0", port=8050, debug=False)
+    app.run(host="0.0.0.0", port=8050, debug=False)
 

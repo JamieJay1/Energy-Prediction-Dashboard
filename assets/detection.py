@@ -1,55 +1,54 @@
 import pandas as pd
 from sklearn.ensemble import IsolationForest
-
-# Create summary list
-summary = []
-
-# Create full anomaly records list (for anomalies.csv)
-anomaly_records = []
+from sklearn.preprocessing import StandardScaler
 
 # Top 5 buildings
-top_5_buildings = ['Hog_office_Lizzie', 'Hog_education_Jewel', 'Hog_public_Octavia',
-                   'Hog_lodging_Francisco', 'Hog_assembly_Dona']
+top_5_buildings = [
+    'Hog_office_Lizzie',
+    'Hog_education_Jewel',
+    'Hog_public_Octavia',
+    'Hog_lodging_Francisco',
+    'Hog_assembly_Dona'
+]
 
-for building_id in top_5_buildings:
-    building_df = daily_df[daily_df['building_id'] == building_id].copy()
-    building_df = building_df.dropna(subset=['value', 'airTemperature', 'dewTemperature', 'windSpeed', 'seaLvlPressure'])
+# Collect all results here
+all_anomalies = []
 
-    # Select features
-    feature_cols = ['value', 'airTemperature', 'dewTemperature', 'windSpeed', 'seaLvlPressure']
-    X = building_df[feature_cols]
+# Loop through each building
+for building in top_5_buildings:
+    df_building = df_long[df_long['building_id'] == building].copy()
+    df_building = df_building.sort_values('timestamp')
+
+    # Feature engineering
+    df_building['lag_1'] = df_building['value'].shift(1)
+    df_building['lag_7'] = df_building['value'].shift(7)
+    df_building['rolling_mean_7'] = df_building['value'].rolling(7).mean()
+    df_building['rolling_std_7'] = df_building['value'].rolling(7).std()
+    df_building['dayofweek'] = df_building['timestamp'].dt.dayofweek
+    df_building['month'] = df_building['timestamp'].dt.month
+
+    # Drop rows with missing values
+    df_building.dropna(inplace=True)
+
+    # Feature selection
+    features = [
+        'value', 'lag_1', 'lag_7', 'rolling_mean_7', 'rolling_std_7',
+        'dayofweek', 'month',
+        'airTemperature', 'dewTemperature', 'windSpeed', 'seaLvlPressure'
+    ]
+
+    # Normalize
+    scaler = StandardScaler()
+    X_scaled = scaler.fit_transform(df_building[features])
 
     # Apply Isolation Forest
-    iso_forest = IsolationForest(n_estimators=100, contamination='auto', random_state=42)
-    preds = iso_forest.fit_predict(X)
-    building_df['is_anomaly'] = (preds == -1).astype(int)
+    iso = IsolationForest(n_estimators=100, contamination="auto", random_state=42)
+    df_building['anomaly'] = iso.fit_predict(X_scaled)
 
+    # Add to result
+    all_anomalies.append(df_building[['timestamp', 'building_id', 'value', 'anomaly']])
 
-    # Convert to daily level: mark a day as anomalous if any anomaly occurred that day
-    daily_anomaly = building_df.groupby('date')['is_anomaly'].max().reset_index()
-    daily_anomaly['building_id'] = building_id
-    daily_anomaly['model'] = 'isolation_forest'
-
-    # Store for full export
-    anomaly_records.append(daily_anomaly)
-
-    # Summary
-    total_days = len(daily_anomaly)
-    anomaly_days = daily_anomaly['is_anomaly'].sum()
-    anomaly_rate = round((anomaly_days / total_days) * 100, 2)
-
-    summary.append({
-        'Building': building_id,
-        'Total Days': total_days,
-        'Anomalies Detected': anomaly_days,
-        'Anomaly Rate (%)': anomaly_rate
-    })
-
-# Convert and print summary
-summary_df = pd.DataFrame(summary)
-print(summary_df)
-
-# Concatenate full anomalies and export
-anomalies_df = pd.concat(anomaly_records, ignore_index=True)
-anomalies_df.to_csv('/content/drive/MyDrive/bdg2_energy_project/energy_dashboard/data/anomalies.csv', index=False)
-print("✅ anomalies.csv saved!")
+# Combine and save to CSV
+anomaly_df = pd.concat(all_anomalies, ignore_index=True)
+anomaly_df.to_csv("/content/drive/MyDrive/bdg2_energy_project/energy_dashboard/data/anomalies.csv", index=False)
+print("anomalies.csv saved with shape:", anomaly_df.shape)
