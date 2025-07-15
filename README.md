@@ -26,13 +26,18 @@ This project uses the **[Building Data Genome Project 2](https://www.kaggle.com/
 
 ## Setup Instructions
 
-###  Option 1: Google Colab
+### Google Colab
 
 1. Open the notebook in [Colab](https://colab.research.google.com/)
 2. Mount your Google Drive:
    ```python
    from google.colab import drive
    drive.mount('/content/drive')
-![AnomalyDetect](https://github.com/user-attachments/assets/0f12018b-8d06-455e-8784-a1ebb026e7b1)
+3.then Upload Your Kaggle.json file:
+from google.colab import files
+files.upload()  # upload kaggle.json here
+
 ![Screenshot 2025-07-04 170615](https://github.com/user-attachments/assets/a2bdf231-404e-461b-a8ed-96bf8715cd1c)
-![Screenshot 2025-07-04 015930](https://github.com/user-attachments/assets/2554c269-5616-4ac2-8b58-3e7cab795dc5)
+![Screenshot 2025-07-04 015930](https://github.com/user-attachments/assets/<img width="1395" height="500" alt="newplot (2)" src="https://github.com/user-attachments/assets/46f0b11a-46a2-4c57-9a6f-48f42dc7500c" />
+2554c269-5616-4ac2-8b58-3e7cab795dc5)
+
