@@ -102,9 +102,9 @@ for bld in top5:
 
 # Save full predictions to CSV
 all_preds.to_csv("/content/drive/MyDrive/bdg2_energy_project/energy_dashboard/data/predictions.csv", index=False)
-print("✅ Saved predictions.csv with shape:", all_preds.shape)
+print("Saved predictions.csv with shape:", all_preds.shape)
 
 # Print RMSE/MAE results
 lstm_df = pd.DataFrame(lstm_results)
-print("\n📈 Evaluation Summary:")
+print("\n Evaluation Summary:")
 print(lstm_df)
