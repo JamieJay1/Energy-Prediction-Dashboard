@@ -42,3 +42,6 @@ This project uses the **[Building Data Genome Project 2](https://www.kaggle.com/
 ![Screenshot 2025-07-04 015930](https://github.com/user-attachments/assets/<img width="1395" height="500" alt="newplot (2)" src="https://github.com/user-attachments/assets/46f0b11a-46a2-4c57-9a6f-48f42dc7500c" />
 2554c269-5616-4ac2-8b58-3e7cab795dc5)
 
+<img width="1878" height="780" alt="Screenshot 2025-07-04 015930" src="https://github.com/user-attachments/assets/bf2042df-ff53-4c69-ad3c-7a9d0abfd330" />
+
+
